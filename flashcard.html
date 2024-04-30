@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flashcard App</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="navbar-container"></div> <!-- Container for the navbar -->
+
+        <div class="flashcard-container">
+            <div class="flip-container" id="flashcard">
+                <div class="flipper">
+                    <div class="front">
+                        <span id="flashcard--content_question"></span>
+                    </div>
+                    <div class="back">
+                        <span id="flashcard--content_answer"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="refresh">New</button>
+    </div>
+
+    <script src="scripts/app.js"></script>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/flashcard.js"></script>
+</body>
+
+</html>

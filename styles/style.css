@@ -1,10 +1,15 @@
 :root {
-  --background-color: #232323;
-  --text-color: #cdcdcd;
-  --hover-color: tomato;
-  --hamburger-color: #cdcdcd;
+  /* Primary Colors */
+  --primary-color: #232323; /* Background Color */
+  --secondary-color: #cdcdcd; /* Text Color */
+
+  /* Secondary Colors */
+  --accent-color: tomato; /* Hover Color */
+
+  /* Additional Colors */
+  --hamburger-color: var(--secondary-color);
   --menu-background-color: #ededed;
-  --menu-text-color: #232323;
+  --menu-text-color: var(--primary-color);
   --menu-hover-color: #888;
 }
 
@@ -12,20 +17,19 @@ body {
   margin: 0;
   padding: 0;
 
-  /* make it look decent enough */
-  background: var(--background-color);
-  color: var(--text-color);
+  background: var(--primary-color);
+  color: var(--secondary-color);
   font-family: "Avenir Next", "Avenir", sans-serif;
 }
 
+/* Nav Menu */
 #menuToggle {
   display: block;
   position: relative;
   top: 50px;
   left: 50px;
-
+  width: fit-content;
   z-index: 1;
-
   -webkit-user-select: none;
   user-select: none;
 }
@@ -38,7 +42,7 @@ body {
 }
 
 #menuToggle a:hover {
-  color: var(--hover-color);
+  color: var(--accent-color);
 }
 
 #menuToggle input {
@@ -51,15 +55,12 @@ body {
 
   cursor: pointer;
 
-  opacity: 0; /* hide this */
-  z-index: 2; /* and place it over the hamburger */
+  opacity: 0;
+  z-index: 2;
 
   -webkit-touch-callout: none;
 }
 
-/*
-  * Just a quick hamburger
-  */
 #menuToggle span {
   display: block;
   width: 33px;
@@ -86,35 +87,21 @@ body {
   transform-origin: 0% 100%;
 }
 
-/* 
-  * Transform all the slices of hamburger
-  * into a crossmark.
-  */
 #menuToggle input:checked ~ span {
   opacity: 1;
   transform: rotate(45deg) translate(-2px, -1px);
-  background: var(--background-color);
+  background: var(--primary-color);
 }
 
-/*
-  * But let's hide the middle one.
-  */
 #menuToggle input:checked ~ span:nth-last-child(3) {
   opacity: 0;
   transform: rotate(0deg) scale(0.2, 0.2);
 }
 
-/*
-  * Ohyeah and the last one should go the other direction
-  */
 #menuToggle input:checked ~ span:nth-last-child(2) {
   transform: rotate(-45deg) translate(0, -1px);
 }
 
-/*
-  * Make this absolute positioned
-  * at the top left of the screen
-  */
 #menu {
   position: absolute;
   width: 300px;
@@ -125,7 +112,6 @@ body {
   background: var(--menu-background-color);
   list-style-type: none;
   -webkit-font-smoothing: antialiased;
-  /* to stop flickering of text in safari */
 
   transform-origin: 0% 0%;
   transform: translate(-100%, 0);
@@ -138,13 +124,11 @@ body {
   font-size: 22px;
 }
 
-/*
-  * And let's slide it in from the left
-  */
 #menuToggle input:checked ~ ul {
   transform: none;
 }
 
+/* Page Content */
 .content {
   text-align: center;
 }
@@ -157,4 +141,208 @@ body {
 .about {
   font-size: 14px;
   color: var(--menu-hover-color);
+}
+
+/* study.html */
+
+.page-content {
+  padding: 50px;
+  display: flex;
+  flex-flow: wrap;
+  font-family: "Ubuntu", sans-serif;
+}
+.page-content * {
+  box-sizing: border-box;
+}
+
+.card-container {
+  flex: 300px;
+  margin: 30px;
+  text-align: initial;
+}
+.card-container .card {
+  font-weight: bold;
+  position: relative;
+  width: 100%;
+}
+.card-container .card a {
+  padding: 30px;
+  width: 100%;
+  height: 400px;
+  border: 2px solid white;
+  background: black;
+  text-decoration: none;
+  color: white;
+  display: block;
+  transition: 0.25s ease;
+  border-radius: 1em;
+}
+
+.card-container .card a:hover {
+  transform: translate(-30px, -30px);
+  border-color: var(--accent-color);
+}
+.card-container .card a:hover .card--display {
+  display: none;
+  height: 100%;
+}
+.card-container .card a:hover .card--hover {
+  display: block;
+}
+.card-container .card a .card--display i {
+  font-size: 60px;
+  margin-top: 200px;
+}
+.card-container .card a .card--display h2 {
+  margin: 20px 0 0;
+}
+.card-container .card a .card--hover {
+  display: none;
+}
+.card-container .card a .card--hover h2 {
+  margin: 20px 0;
+}
+.card-container .card a .card--hover p {
+  font-weight: normal;
+  line-height: 1.5;
+}
+.card-container .card a .card--hover p.link {
+  margin: 20px 0 0;
+  font-weight: bold;
+  color: var(--accent-color);
+}
+.card-container .card .card--border {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border: 2px dashed white;
+  border-radius: 1em;
+  z-index: -1;
+}
+.card-container .card.card--dark a {
+  color: black;
+  background-color: white;
+  border-color: white;
+}
+.card-container .card.card--dark a .card--hover .link {
+  color: var(--accent-color);
+}
+
+.flashcard-container {
+  font-family: "Arvo";
+  font-size: 2em;
+}
+
+.flip-container {
+  margin: 20vh auto;
+  -ms-perspective: 1000;
+  perspective: 1000;
+  -ms-transform: perspective(1000px);
+  -moz-transform: perspective(1000px);
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+}
+
+.flip-container.flipped .flipper,
+.flip-container.flipped .flipper {
+  transform: rotateY(180deg);
+}
+
+.flip-container,
+.front,
+.back {
+  width: 30vw;
+  height: 60vh;
+  border-radius: 1em;
+}
+
+@media only screen and (max-width: 768px) {
+  .flip-container {
+    margin: 10vh auto;
+  }
+
+  .flip-container,
+  .front,
+  .back {
+    width: 80vw;
+    height: 80vh;
+  }
+}
+.front,
+.back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* padding: calc(50% - 0.5em) 1em 0 1em; */
+  padding: 0 1em;
+  color: var(--secondary-color);
+  border: 1px solid var(--secondary-color);
+}
+
+.flipper {
+  position: relative;
+  -webkit-transition: 0.6s;
+  -webkit-transform-style: preserve-3d;
+  -ms-transition: 0.6s;
+  -moz-transition: 0.6s;
+  -moz-transform: perspective(1000px);
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+}
+
+.front,
+.back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transition: 0.6s;
+  -webkit-transform-style: preserve-3d;
+  -webkit-transform: rotateY(0deg);
+  -moz-transition: 0.6s;
+  -moz-transform-style: preserve-3d;
+  -moz-transform: rotateY(0deg);
+  -o-transition: 0.6s;
+  -o-transform-style: preserve-3d;
+  -o-transform: rotateY(0deg);
+  -ms-transition: 0.6s;
+  -ms-transform-style: preserve-3d;
+  -ms-transform: rotateY(0deg);
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  transform: rotateY(0deg);
+}
+
+.front {
+  z-index: 2;
+  /* for firefox 31 */
+  -webkit-transform: rotateY(0deg);
+  -ms-transform: rotateY(0deg);
+  background-color: var(--primary-color);
+}
+
+.back {
+  transform: rotateY(-180deg);
+  background-color: var(--accent-color);
+}
+
+.refresh {
+  display: block;
+  margin: -1.5em auto 0 auto;
+  width: 50vw;
+  max-width: 8em;
+  height: 1.5em;
+  border: 0;
+  border-radius: 0.5em 0.5em 0 0;
+  color: var(--primary-color);
+  background-color: var(--secondary-color);
+  font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
 }

@@ -1,0 +1,68 @@
+<!-- add.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Questions - StudieAssist App</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div id="navbar-container"></div> <!-- Container for the navbar -->
+
+        <div class="content" id="addPage">
+            <h1 class="title">Voeg Vragen Toe</h1>
+            <!-- Dropdown to choose question type -->
+            <label for="question-type">Selecteer Vraagtype:</label><br>
+            <select id="question-type">
+                <option disabled selected>Kies een optie</option>
+                <option value="flashcard">Flashcard</option>
+                <option value="multiple-choice">Multiple Choice</option>
+            </select><br><br>
+
+            <!-- Form element -->
+            <form id="question-form">
+                <!-- Flashcard question input fields -->
+                <div id="flashcard-question-fields" class="question-fields">
+                    <fieldset>
+                        <legend>Flashcard Vraag</legend>
+                        <label for="flashcard-question">Vraag:</label><br>
+                        <input type="text" id="flashcard-question" name="flashcard-question"><br><br>
+                        <label for="flashcard-answer">Antwoord:</label><br>
+                        <input type="text" id="flashcard-answer" name="flashcard-answer"><br><br>
+                    </fieldset>
+                </div>
+
+                <!-- Multiple choice question input fields -->
+                <div id="mc-question-fields" class="question-fields">
+                    <fieldset>
+                        <legend>Multiple Choice Vraag</legend>
+                        <label for="mc-question">Vraag:</label><br>
+                        <input type="text" id="mc-question" name="mc-question"><br><br>
+                        <label for="mc-options">Opties:</label><br>
+                        <input type="text" id="mc-option-1" name="mc-option-1"><input type="radio" name="correct-answer"
+                            value="1">Correct Answer<br>
+                        <input type="text" id="mc-option-2" name="mc-option-2"><input type="radio" name="correct-answer"
+                            value="2">Correct Answer<br>
+                        <input type="text" id="mc-option-3" name="mc-option-3"><input type="radio" name="correct-answer"
+                            value="3">Correct Answer<br>
+                        <input type="text" id="mc-option-4" name="mc-option-4"><input type="radio" name="correct-answer"
+                            value="4">Correct Answer<br>
+                    </fieldset>
+                </div>
+
+                <button type="submit">Toevoegen</button>
+            </form>
+            <!-- End of form element -->
+        </div>
+    </div>
+
+    <script src="scripts/app.js"></script>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/add.js"></script> <!-- JavaScript for handling form submission -->
+</body>
+
+</html>

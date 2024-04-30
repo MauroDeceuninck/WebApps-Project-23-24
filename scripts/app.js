@@ -1,23 +1,5 @@
 // scripts/app.js
 document.addEventListener("DOMContentLoaded", function () {
-  const form = document.getElementById("question-form");
-  const questionInput = document.getElementById("question-input");
-  const answerInput = document.getElementById("answer-input");
-
-  form.addEventListener("submit", function (event) {
-    event.preventDefault();
-    const question = questionInput.value.trim();
-    const answer = answerInput.value.trim();
-
-    if (question && answer) {
-      saveQuestion(question, answer);
-      questionInput.value = "";
-      answerInput.value = "";
-    } else {
-      alert("Please enter both a question and an answer.");
-    }
-  });
-
   // Check if browser supports service workers
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", function () {
@@ -38,32 +20,40 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-function saveQuestion(question, answer) {
-  const dbPromise = openDB();
-  dbPromise
-    .then((db) => {
-      const tx = db.transaction("questions", "readwrite");
-      const store = tx.objectStore("questions");
-      store.add({ question, answer });
-      return tx.complete;
-    })
-    .then(() => {
-      console.log("Question added to IndexedDB.");
-    })
-    .catch((error) => {
-      console.error("Error adding question to IndexedDB:", error);
-    });
-}
-
 function openDB() {
-  return idb.openDB("studieassist-db", 1, {
-    upgrade(db) {
-      if (!db.objectStoreNames.contains("questions")) {
-        db.createObjectStore("questions", {
-          keyPath: "id",
-          autoIncrement: true,
-        });
-      }
-    },
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("studieassist-db", 3);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore("questions", { keyPath: "id", autoIncrement: true });
+      db.createObjectStore("answers", { keyPath: "id", autoIncrement: true });
+    };
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      resolve(db);
+    };
+
+    request.onerror = (event) => {
+      reject(event.target.error);
+    };
   });
 }
+
+// function saveQuestion(question, answer) {
+//   const dbPromise = openDB();
+//   dbPromise
+//     .then((db) => {
+//       const tx = db.transaction("questions", "readwrite");
+//       const store = tx.objectStore("questions");
+//       store.add({ question, answer });
+//       return tx.complete;
+//     })
+//     .then(() => {
+//       console.log("Question added to IndexedDB.");
+//     })
+//     .catch((error) => {
+//       console.error("Error adding question to IndexedDB:", error);
+//     });
+// }
