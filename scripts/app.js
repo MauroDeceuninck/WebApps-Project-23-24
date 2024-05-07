@@ -40,20 +40,3 @@ function openDB() {
     };
   });
 }
-
-// function saveQuestion(question, answer) {
-//   const dbPromise = openDB();
-//   dbPromise
-//     .then((db) => {
-//       const tx = db.transaction("questions", "readwrite");
-//       const store = tx.objectStore("questions");
-//       store.add({ question, answer });
-//       return tx.complete;
-//     })
-//     .then(() => {
-//       console.log("Question added to IndexedDB.");
-//     })
-//     .catch((error) => {
-//       console.error("Error adding question to IndexedDB:", error);
-//     });
-// }

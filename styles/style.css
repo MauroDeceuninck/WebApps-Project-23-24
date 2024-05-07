@@ -360,3 +360,90 @@ body {
   cursor: pointer;
   outline: none;
 }
+
+/* Multiple choice page */
+
+#mc-questions-container {
+  display: flex;
+  justify-content: center; /* Horizontally center items */
+  align-items: center; /* Vertically center items */
+}
+
+#mc-questions-container label {
+  cursor: pointer;
+  display: block;
+  margin-bottom: 15px;
+}
+
+/* GENERAL INPUT STYLING */
+#mc-questions-container input {
+  outline: none;
+}
+
+#mc-questions-container input:not([type="textbox"]) {
+  visibility: hidden;
+  position: absolute;
+}
+
+#mc-questions-container [data-type],
+#mc-questions-container [data-type] * {
+  -moz-user-select: -moz-none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* CHECKBOX */
+#mc-questions-container [data-type="pointer"] {
+  float: left;
+  margin-right: 8px;
+  margin-top: 4px;
+  width: 22px;
+  height: 7px;
+  border-radius: 2px;
+  background: #909090;
+  transition: all 0.6s ease;
+  -ms-transition: all 0.6s ease;
+  -webkit-transition: all 0.6s ease;
+  -moz-transition: all 0.6s ease;
+  -o-transition: all 0.6s ease;
+}
+
+#mc-questions-container input:checked + label [data-type="pointer"] {
+  background: #ffffff;
+  box-shadow: 0 0 7px 1px white;
+  transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+}
+
+#mc-questions-container label span {
+  transition: all 0.2s linear;
+  -ms-transition: all 0.2s linear;
+  -webkit-transition: all 0.2s linear;
+  -moz-transition: all 0.2s linear;
+  -o-transition: all 0.2s linear;
+}
+
+#mc-questions-container label span {
+  color: #ffffff;
+}
+
+#mc-questions-container label.correct span {
+  color: green;
+}
+
+#mc-questions-container label.incorrect span {
+  color: red;
+}
+
+#mc-questions-container label [data-type="pointer"] + span {
+  position: relative;
+  left: 6px;
+}
+#mc-questions-container input:checked + label [data-type="pointer"] + span {
+  left: 0;
+}

@@ -24,7 +24,8 @@ function displayMultipleChoiceQuestions() {
           const questionData = cursor.value;
           if (questionData.questionType === "mc") {
             const mcQuestionElement = createMCQuestionElement(
-              questionData.question
+              questionData.question,
+              questionData.id
             );
             mcQuestionsContainer.appendChild(mcQuestionElement);
             displayMCOptions(answerStore, questionData.id, mcQuestionElement);
@@ -64,8 +65,8 @@ function displayMCOptions(store, questionId, mcQuestionElement) {
       const mcOptionsContainer = mcQuestionElement.querySelector(
         ".mc-options-container"
       );
-      shuffledAnswers.forEach((answer) => {
-        const mcOptionElement = createMCOptionElement(answer.option);
+      shuffledAnswers.forEach((answer, index) => {
+        const mcOptionElement = createMCOptionElement(answer.option, index + 1);
         mcOptionsContainer.appendChild(mcOptionElement);
       });
     } else {
@@ -82,19 +83,114 @@ function displayMCOptions(store, questionId, mcQuestionElement) {
   };
 }
 
-function createMCQuestionElement(questionText) {
+function createMCQuestionElement(questionText, questionId) {
   const mcQuestionElement = document.createElement("div");
   mcQuestionElement.classList.add("mc-question");
   mcQuestionElement.innerHTML = `
       <p class="question-text">${questionText}</p>
       <div class="mc-options-container"></div>
+      <button class="check-answer-btn" data-question-id="${questionId}">Check Answer</button>
     `;
   return mcQuestionElement;
 }
 
-function createMCOptionElement(optionText) {
+function createMCOptionElement(optionText, optionId) {
   const mcOptionElement = document.createElement("div");
-  mcOptionElement.classList.add("mc-option");
-  mcOptionElement.textContent = optionText;
+  mcOptionElement.classList.add("move");
+
+  const inputElement = document.createElement("input");
+  inputElement.type = "radio";
+  inputElement.name = "r";
+  inputElement.id = "pointer" + optionId;
+
+  const labelElement = document.createElement("label");
+  labelElement.htmlFor = "pointer" + optionId;
+
+  const divElement = document.createElement("div");
+  divElement.setAttribute("data-type", "pointer");
+
+  const spanElement = document.createElement("span");
+  spanElement.textContent = optionText;
+
+  labelElement.appendChild(divElement);
+  labelElement.appendChild(spanElement);
+
+  mcOptionElement.appendChild(inputElement);
+  mcOptionElement.appendChild(labelElement);
+
   return mcOptionElement;
 }
+
+document.addEventListener("click", function (event) {
+  if (event.target.classList.contains("check-answer-btn")) {
+    const questionId = parseInt(event.target.getAttribute("data-question-id"));
+    const selectedOption = document.querySelector(`input[name="r"]:checked`);
+    if (!selectedOption) {
+      alert("Please select an option before checking the answer.");
+      return;
+    }
+    const selectedOptionText =
+      selectedOption.nextElementSibling.textContent.trim();
+
+    openDB()
+      .then((db) => {
+        const transaction = db.transaction(["answers"], "readonly");
+        const answerStore = transaction.objectStore("answers");
+
+        console.log("Checking answer for question ID:", questionId);
+        const getRequest = answerStore.openCursor();
+
+        getRequest.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            const answer = cursor.value;
+            console.log("All answers:", cursor.value);
+            if (answer.questionId === questionId) {
+              console.log("Answer for question ID:", questionId, answer);
+              console.log("Selected option:", selectedOptionText);
+              console.log("Correct option:", answer.option);
+
+              // Highlight wrong answer in red
+              if (selectedOptionText !== answer.option) {
+                selectedOption.nextElementSibling.classList.add("incorrect");
+              }
+              // Highlight correct answer in green
+              if (selectedOptionText === answer.option && answer.isCorrect) {
+                selectedOption.nextElementSibling.classList.add("correct");
+              }
+
+              if (selectedOptionText === answer.option && !answer.isCorrect) {
+                selectedOption.nextElementSibling.classList.add("incorrect");
+              }
+
+              if (selectedOptionText === answer.option) {
+                alert("Correct answer!");
+                event.target.textContent = "Next";
+                // You can implement logic to proceed to the next question here
+              } else {
+                alert("Incorrect answer. Please try again.");
+                // You can implement additional logic for incorrect answers here
+              }
+              return; // Stop iterating over cursor once answer is found
+            }
+            cursor.continue();
+          } else {
+            // No answer found
+            console.log("No answer found for question ID:", questionId);
+            alert("No answer found for this question.");
+          }
+        };
+
+        getRequest.onerror = function (event) {
+          console.error(
+            "Error fetching answer for question ID:",
+            questionId,
+            event.target.error
+          );
+        };
+      })
+      .catch((error) => {
+        console.error("Error opening database:", error);
+      });
+  }
+});
