@@ -12,6 +12,9 @@
   --menu-text-color: var(--primary-color);
   --menu-hover-color: #888;
 }
+/* * {
+  box-sizing: border-box;
+} */
 
 body {
   margin: 0;
@@ -20,6 +23,10 @@ body {
   background: var(--primary-color);
   color: var(--secondary-color);
   font-family: "Avenir Next", "Avenir", sans-serif;
+}
+
+.container {
+  overflow: hidden;
 }
 
 /* Nav Menu */
@@ -134,8 +141,10 @@ body {
 }
 
 .title {
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
   font-size: 24px;
+  top: 22px;
+  position: relative;
 }
 
 .about {
@@ -230,13 +239,15 @@ body {
   color: var(--accent-color);
 }
 
+/* flashcard.html */
+
 .flashcard-container {
   font-family: "Arvo";
   font-size: 2em;
 }
 
 .flip-container {
-  margin: 20vh auto;
+  margin: 10vh auto;
   -ms-perspective: 1000;
   perspective: 1000;
   -ms-transform: perspective(1000px);
@@ -276,7 +287,6 @@ body {
   align-items: center;
   justify-content: center;
   /* padding: calc(50% - 0.5em) 1em 0 1em; */
-  padding: 0 1em;
   color: var(--secondary-color);
   border: 1px solid var(--secondary-color);
 }
@@ -329,6 +339,10 @@ body {
 .back {
   transform: rotateY(-180deg);
   background-color: var(--accent-color);
+}
+
+.flashcard--span {
+  margin: 0 1em;
 }
 
 .refresh {

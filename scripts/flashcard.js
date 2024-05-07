@@ -137,11 +137,3 @@ function refresh() {
   currentQuestionIndex = 0; // Reset currentQuestionIndex to 0
   fetchFlashcardData(); // Fetch the next flashcard
 }
-
-function shuffleArray(array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-}
