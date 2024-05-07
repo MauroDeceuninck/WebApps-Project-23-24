@@ -89,31 +89,36 @@ function displayNextFlashcard(answerStore) {
       console.log("Question already seen. Moving to the next question.");
       // If the question has been seen, move to the next one
     } else {
-      const getRequest = answerStore.get(questionId);
+      // Check if the question type is "fc"
+      if (shuffledQuestions[currentQuestionIndex].questionType === "fc") {
+        const getRequest = answerStore.get(questionId);
 
-      getRequest.onsuccess = function (event) {
-        const answer = event.target.result;
-        if (answer) {
-          displayFlashcard(
-            shuffledQuestions[currentQuestionIndex].question,
-            answer.option
-          );
-          // Add the question to the set of seen questions
-          questionsSeen.add(questionId);
-        } else {
-          console.log(
-            "No answer found for question:",
-            shuffledQuestions[currentQuestionIndex]
-          );
-        }
-      };
+        getRequest.onsuccess = function (event) {
+          const answer = event.target.result;
+          if (answer) {
+            displayFlashcard(
+              shuffledQuestions[currentQuestionIndex].question,
+              answer.option
+            );
+            // Add the question to the set of seen questions
+            questionsSeen.add(questionId);
+          } else {
+            console.log(
+              "No answer found for question:",
+              shuffledQuestions[currentQuestionIndex]
+            );
+          }
+        };
 
-      getRequest.onerror = function (event) {
-        console.error("Error fetching answer:", event.target.error);
-      };
+        getRequest.onerror = function (event) {
+          console.error("Error fetching answer:", event.target.error);
+        };
 
-      // Exit the loop after processing the current question
-      return;
+        // Exit the loop after processing the current question
+        return;
+      } else {
+        console.log("Skipping question with type other than 'fc'.");
+      }
     }
 
     // Increment the currentQuestionIndex for the next iteration
@@ -122,10 +127,7 @@ function displayNextFlashcard(answerStore) {
 
   // If we reach this point, it means all questions have been seen
   console.log("All questions displayed.");
-  if (questionsSeen.size === totalQuestions) {
-    // Show popup indicating that all questions were seen
-    alert("All questions were seen.");
-  }
+  alert("All questions were seen.");
 }
 
 function displayFlashcard(question, answer) {

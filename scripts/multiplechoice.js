@@ -1,52 +1,8 @@
 // scripts/multiplechoice.js
 
 document.addEventListener("DOMContentLoaded", function () {
-  displayMultipleChoiceQuestions();
+  loadNextQuestion();
 });
-
-function displayMultipleChoiceQuestions() {
-  openDB()
-    .then((db) => {
-      const transaction = db.transaction(["questions", "answers"], "readonly");
-      const questionStore = transaction.objectStore("questions");
-      const answerStore = transaction.objectStore("answers");
-
-      const request = questionStore.openCursor();
-
-      const mcQuestionsContainer = document.getElementById(
-        "mc-questions-container"
-      );
-
-      request.onsuccess = function (event) {
-        const cursor = event.target.result;
-        if (cursor) {
-          console.log("Displaying multiple choice question:", cursor.value);
-          const questionData = cursor.value;
-          if (questionData.questionType === "mc") {
-            const mcQuestionElement = createMCQuestionElement(
-              questionData.question,
-              questionData.id
-            );
-            mcQuestionsContainer.appendChild(mcQuestionElement);
-            displayMCOptions(answerStore, questionData.id, mcQuestionElement);
-          }
-          cursor.continue();
-        } else {
-          console.log("All multiple choice questions displayed.");
-        }
-      };
-
-      request.onerror = function (event) {
-        console.error(
-          "Error fetching multiple choice questions:",
-          event.target.error
-        );
-      };
-    })
-    .catch((error) => {
-      console.error("Error opening database:", error);
-    });
-}
 
 function displayMCOptions(store, questionId, mcQuestionElement) {
   console.log("Fetching answers for question ID:", questionId);
@@ -157,6 +113,14 @@ document.addEventListener("click", function (event) {
               // Highlight correct answer in green
               if (selectedOptionText === answer.option && answer.isCorrect) {
                 selectedOption.nextElementSibling.classList.add("correct");
+                // Update button text to "Next Question"
+                const nextQuestionBtn = document.querySelector(
+                  ".check-answer-btn[data-question-id='" + questionId + "']"
+                );
+                nextQuestionBtn.textContent = "Next Question";
+                // Add class to identify the button as a "Next Question" button
+                nextQuestionBtn.classList.remove("check-answer-btn"); // Remove previous class
+                nextQuestionBtn.classList.add("next-question-btn");
               }
 
               if (selectedOptionText === answer.option && !answer.isCorrect) {
@@ -165,7 +129,6 @@ document.addEventListener("click", function (event) {
 
               if (selectedOptionText === answer.option) {
                 alert("Correct answer!");
-                event.target.textContent = "Next";
                 // You can implement logic to proceed to the next question here
               } else {
                 alert("Incorrect answer. Please try again.");
@@ -192,5 +155,67 @@ document.addEventListener("click", function (event) {
       .catch((error) => {
         console.error("Error opening database:", error);
       });
+  } else if (event.target.classList.contains("next-question-btn")) {
+    // Handle logic for next question button here
+    console.log("Next question button clicked");
+    loadNextQuestion();
   }
 });
+
+let displayedQuestionIds = []; // Keep track of displayed question IDs
+
+function loadNextQuestion() {
+  openDB()
+    .then((db) => {
+      const transaction = db.transaction(["questions", "answers"], "readonly");
+      const questionStore = transaction.objectStore("questions");
+      const answerStore = transaction.objectStore("answers");
+
+      const request = questionStore.getAll();
+
+      const mcQuestionsContainer = document.getElementById(
+        "mc-questions-container"
+      );
+
+      request.onsuccess = function (event) {
+        const questions = event.target.result;
+        if (questions && questions.length > 0) {
+          // Filter out questions that have already been displayed
+          const filteredQuestions = questions.filter(
+            (question) => !displayedQuestionIds.includes(question.id)
+          );
+          // Filter out only multiple choice questions
+          const mcQuestions = filteredQuestions.filter(
+            (question) => question.questionType === "mc"
+          );
+          // If there are no more new multiple choice questions, display an alert
+          if (mcQuestions.length === 0) {
+            alert("All multiple choice questions have been seen.");
+            return;
+          }
+          // Shuffle the array of multiple choice questions
+          const shuffledQuestions = shuffleArray(mcQuestions);
+          // Display the first multiple choice question from the shuffled list
+          const questionData = shuffledQuestions[0];
+          const mcQuestionElement = createMCQuestionElement(
+            questionData.question,
+            questionData.id
+          );
+          mcQuestionsContainer.innerHTML = ""; // Clear previous question
+          mcQuestionsContainer.appendChild(mcQuestionElement);
+          displayMCOptions(answerStore, questionData.id, mcQuestionElement);
+          // Update the displayedQuestionIds array
+          displayedQuestionIds.push(questionData.id);
+        } else {
+          console.log("No questions found in the database.");
+        }
+      };
+
+      request.onerror = function (event) {
+        console.error("Error fetching questions:", event.target.error);
+      };
+    })
+    .catch((error) => {
+      console.error("Error opening database:", error);
+    });
+}

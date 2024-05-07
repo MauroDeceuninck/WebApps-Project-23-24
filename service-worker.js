@@ -1,4 +1,4 @@
-const CACHE_NAME = "shopping-list-cache-v1";
+const CACHE_NAME = "study-app-cache-v1";
 const staticFiles = [
   "/",
   "/index.html",
