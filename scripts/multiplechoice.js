@@ -128,13 +128,13 @@ document.addEventListener("click", function (event) {
                 selectedOption.nextElementSibling.classList.add("incorrect");
               }
 
-              if (selectedOptionText === answer.option) {
-                alert("Correct answer!");
-                // You can implement logic to proceed to the next question here
-              } else {
-                alert("Incorrect answer. Please try again.");
-                // You can implement additional logic for incorrect answers here
-              }
+              // if (selectedOptionText === answer.option) {
+              //   alert("Correct answer!");
+              //   // You can implement logic to proceed to the next question here
+              // } else {
+              //   alert("Incorrect answer. Please try again.");
+              //   // You can implement additional logic for incorrect answers here
+              // }
               return; // Stop iterating over cursor once answer is found
             }
             cursor.continue();
@@ -201,7 +201,16 @@ function loadNextQuestion() {
 
           // If there are no more new multiple choice questions, display an alert
           if (mcQuestions.length === 0) {
-            alert("All multiple choice questions have been seen.");
+            // Clear previous content in mcQuestionsContainer
+            mcQuestionsContainer.innerHTML = "";
+
+            // Create a message element
+            const messageElement = document.createElement("p");
+            messageElement.textContent =
+              "All questions have been seen. Please change the category or reload the page to start over";
+
+            // Append the message element to mcQuestionsContainer
+            mcQuestionsContainer.appendChild(messageElement);
             return;
           }
 
@@ -223,6 +232,16 @@ function loadNextQuestion() {
           ttsSetup();
         } else {
           console.log("No questions found in the database.");
+          // Clear previous content in mcQuestionsContainer
+          mcQuestionsContainer.innerHTML = "";
+
+          // Create a message element
+          const messageElement = document.createElement("p");
+          messageElement.textContent =
+            "No questions found, please change the category or add new questions to get started";
+
+          // Append the message element to mcQuestionsContainer
+          mcQuestionsContainer.appendChild(messageElement);
         }
       };
 

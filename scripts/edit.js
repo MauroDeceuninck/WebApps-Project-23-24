@@ -99,7 +99,9 @@ function displayAnswers(answerStore, question, questionElement) {
       answers.forEach((answer) => {
         const answerItem = document.createElement("li");
         answerItem.textContent =
-          answer.option + (answer.isCorrect ? " (Correct)" : "");
+          question.questionType === "mc"
+            ? answer.option + (answer.isCorrect ? " (Correct)" : "")
+            : answer.option;
 
         // Append answer item to the answers list
         answersList.appendChild(answerItem);
@@ -249,11 +251,9 @@ function editQuestion(questionId) {
         console.log("Retrieved question:", question);
         if (question) {
           // Fetch answers associated with the question
-          const getRequest = answerStore.getAll();
+          const getRequest = answerStore.index("questionId").getAll(questionId);
           getRequest.onsuccess = function (event) {
-            const answers = event.target.result.filter(
-              (answer) => answer.questionId === questionId
-            );
+            const answers = event.target.result;
             // Pass both the question and its answers to the edit form
             showEditForm(question, answers);
           };
@@ -277,10 +277,24 @@ function editQuestion(questionId) {
 // Define the editFormContainer variable and assign it the appropriate container element
 const editFormContainer = document.getElementById("edit-form-container");
 
+// Array to store entered answer values
+let answerValues = [];
+
+function hasDuplicates(array) {
+  return new Set(array).size !== array.length;
+}
+
 function showEditForm(question, answers) {
-  console.log("QuestionType in showEditForm:", question.questionType);
+  console.log("Question:", question);
+  console.log("Answers:", answers);
+
   // Clear any existing content in the edit form container
   editFormContainer.innerHTML = "";
+
+  if (!question || !answers) {
+    console.error("Error: Question or answers not found.");
+    return;
+  }
 
   // Create form elements for editing the question
   const editForm = document.createElement("form");
@@ -294,21 +308,10 @@ function showEditForm(question, answers) {
   questionLabel.appendChild(questionInput);
   editForm.appendChild(questionLabel);
 
-  // Loop through the answers and create input fields for each answer
-  answers.forEach((answer, index) => {
-    const answerInput = document.createElement("input");
-    answerInput.type = "textbox";
-    answerInput.value = answer.option;
+  // Initialize to false so that the button starts off enabled
+  let hasDuplicate = false;
 
-    // Create a label for the answer input
-    const answerLabel = document.createElement("label");
-    answerLabel.textContent = `Answer ${index + 1}:`;
-    answerLabel.appendChild(answerInput);
-
-    // Append the answer input field to the edit form
-    editForm.appendChild(answerLabel);
-  });
-
+  // Create the submit button
   const submitBtn = document.createElement("button");
   submitBtn.textContent = "Submit";
   submitBtn.addEventListener("click", function (event) {
@@ -322,7 +325,7 @@ function showEditForm(question, answers) {
       answers: answers.map((answer, index) => ({
         option: editForm.querySelectorAll("input[type='textbox']")[index + 1]
           .value,
-        isCorrect: answer.isCorrect, // You might want to add logic here to update correctness
+        isCorrect: answer.isCorrect,
       })),
     };
 
@@ -330,11 +333,94 @@ function showEditForm(question, answers) {
     updateQuestionAndAnswers(updatedQuestion, question.questionType);
   });
 
-  editForm.appendChild(submitBtn);
+  answers.forEach((answer, index) => {
+    // Create input field for the answer
+    const answerInput = document.createElement("input");
+    answerInput.type = "textbox";
+    answerInput.value = answer.option;
+    const answerContainer = document.createElement("div");
+
+    // Create a label for the answer input
+    const answerLabel = document.createElement("label");
+    answerLabel.textContent = `Answer ${index + 1}:`;
+    answerLabel.appendChild(answerInput);
+
+    // Append the answer input field to the answer container
+    answerContainer.appendChild(answerLabel);
+
+    // Add radio button for selecting correct answer
+    const isCorrectRadio = document.createElement("input");
+    isCorrectRadio.type = "radio";
+    isCorrectRadio.name = `correctAnswer_${question.id}`;
+    isCorrectRadio.value = index;
+    isCorrectRadio.checked = answer.isCorrect;
+    isCorrectRadio.addEventListener("change", function () {
+      // Update isCorrect property of the answer
+      answers.forEach((ans, idx) => {
+        ans.isCorrect = idx === parseInt(isCorrectRadio.value);
+      });
+    });
+
+    const isCorrectLabel = document.createElement("label");
+    isCorrectLabel.textContent = "Correct answer";
+    isCorrectLabel.appendChild(isCorrectRadio);
+
+    answerContainer.appendChild(isCorrectLabel);
+
+    // Add event listener to check for empty or duplicate input values
+    answerInput.addEventListener("input", function () {
+      console.log("Input value changed");
+      // Check if any input value is empty
+      const anyEmpty = [
+        ...editForm.querySelectorAll('input[type="textbox"]'),
+      ].some((input) => input.value.trim() === "");
+      // Check for duplicate input values
+      const anyDuplicate = [
+        ...editForm.querySelectorAll('input[type="textbox"]'),
+      ].some((input, index) => {
+        const currentValue = input.value.trim();
+        return (
+          currentValue !== "" &&
+          [...editForm.querySelectorAll('input[type="textbox"]')].some(
+            (otherInput, otherIndex) =>
+              index !== otherIndex && otherInput.value.trim() === currentValue
+          )
+        );
+      });
+      console.log("Any empty:", anyEmpty);
+      console.log("Any duplicate:", anyDuplicate);
+      // Enable or disable the submit button based on whether there are empty or duplicate values
+      submitBtn.disabled = anyEmpty || anyDuplicate;
+    });
+
+    // Append the answer container to the edit form
+    editForm.appendChild(answerContainer);
+  });
+
+  // Create the cancel button
+  const cancelBtn = document.createElement("button");
+  cancelBtn.textContent = "Cancel";
+  cancelBtn.addEventListener("click", function (event) {
+    event.preventDefault(); // Prevent default form submission
+    // Clear the edit form container
+    editFormContainer.innerHTML = "";
+  });
+
+  const buttonsContainer = document.createElement("div");
+  buttonsContainer.classList.add("buttons-container");
+  buttonsContainer.appendChild(submitBtn);
+  buttonsContainer.appendChild(cancelBtn);
+
+  editForm.appendChild(buttonsContainer);
 
   // Append the edit form to the edit form container
   editFormContainer.appendChild(editForm);
 }
+
+// Load answer values from localStorage when the page loads
+document.addEventListener("DOMContentLoaded", function () {
+  answerValues = JSON.parse(localStorage.getItem("answerValues")) || [];
+});
 
 function updateQuestionAndAnswers(question, questionType) {
   openDB()
@@ -353,6 +439,25 @@ function updateQuestionAndAnswers(question, questionType) {
           existingQuestion.question = question.question;
           existingQuestion.questionType = questionType;
 
+          // Check if the question field is filled in
+          if (existingQuestion.question.trim() === "") {
+            alert("Please fill in the question.");
+            return;
+          }
+
+          // Check if all answer options are filled and a correct answer is selected
+          const allAnswersFilled = question.answers.every(
+            (answer) =>
+              answer.option.trim() !== "" && answer.isCorrect !== undefined
+          );
+
+          if (!allAnswersFilled) {
+            alert(
+              "Please fill in all answer options and select a correct answer."
+            );
+            return;
+          }
+
           // Update the question in the questions store
           const updateQuestionRequest = questionStore.put(existingQuestion);
 
@@ -370,27 +475,38 @@ function updateQuestionAndAnswers(question, questionType) {
                 cursor.continue();
               } else {
                 // Once all existing answers are deleted, add or update the new answers
-                question.answers.forEach((answer) => {
-                  answerStore.put({
-                    questionId: question.id,
-                    option: answer.option,
-                    isCorrect: answer.isCorrect,
-                  }).onsuccess = function (event) {
-                    console.log("Answer added successfully");
-                  };
+                const addAnswerPromises = question.answers.map((answer) => {
+                  return new Promise((resolve, reject) => {
+                    answerStore.put({
+                      questionId: question.id,
+                      option: answer.option,
+                      isCorrect: answer.isCorrect,
+                    }).onsuccess = function (event) {
+                      console.log("Answer added successfully");
+                      resolve();
+                    };
+                  });
                 });
 
-                // Close the edit form after updating
-                const editFormContainer = document.getElementById(
-                  "edit-form-container"
-                );
-                editFormContainer.innerHTML = "";
+                // Wait for all answers to be added or updated
+                Promise.all(addAnswerPromises)
+                  .then(() => {
+                    console.log("All answers added successfully");
+                    // Close the edit form after updating
+                    const editFormContainer = document.getElementById(
+                      "edit-form-container"
+                    );
+                    editFormContainer.innerHTML = "";
 
-                location.reload();
+                    // // Refresh the displayed questions and answers
+                    // displayFlashcardQuestions();
+                    // displayMCQuestions();
 
-                // Alternatively, refresh only the displayed questions and answers:
-                // displayFlashcardQuestions();
-                // displayMCQuestions();
+                    window.location.reload();
+                  })
+                  .catch((error) => {
+                    console.error("Error adding answers:", error);
+                  });
               }
             };
             deleteAnswersRequest.onerror = function (event) {

@@ -45,6 +45,12 @@ function fetchFlashcardData() {
       const answerStore = transaction.objectStore("answers");
       const request = questionStore.getAll();
 
+      const flashcardContainer = document.getElementById("flashcard");
+      const refreshBtn = document.querySelector(".refresh");
+      const noFlashcardMessage = document.getElementById(
+        "no-flashcard-message"
+      );
+
       request.onsuccess = function (event) {
         const questions = event.target.result;
         if (questions.length > 0) {
@@ -79,6 +85,11 @@ function fetchFlashcardData() {
           displayNextFlashcard(answerStore);
         } else {
           console.log("No questions found in IndexedDB.");
+
+          // Hide flashcard container and show no flashcard message
+          refreshBtn.style.display = "none";
+          flashcardContainer.style.display = "none";
+          noFlashcardMessage.style.display = "block";
         }
       };
 
@@ -95,11 +106,9 @@ function displayNextFlashcard(answerStore) {
   console.log("currentQuestionIndex:", currentQuestionIndex);
   console.log("shuffledQuestions.length:", shuffledQuestions.length);
 
-  // Check if all questions have been seen
+  // Check if all flashcards have been seen
   if (questionsSeen.size === totalQuestions) {
-    console.log("All questions displayed.");
-    // Show popup indicating that all questions were seen
-    alert("All questions were seen.");
+    console.log("All flashcards displayed.");
     return;
   }
 
@@ -150,7 +159,8 @@ function displayNextFlashcard(answerStore) {
 
   // If we reach this point, it means all questions have been seen
   console.log("All questions displayed.");
-  alert("All questions were seen.");
+  document.getElementById("flashcard").style.display = "none";
+  document.getElementById("flashcard-seen-message").style.display = "block";
 }
 
 function displayFlashcard(question, answer) {

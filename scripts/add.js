@@ -111,51 +111,71 @@ document.addEventListener("DOMContentLoaded", function () {
     let question, correctAnswer, questionType;
     const selectedOption = questionTypeSelect.value;
     if (selectedOption === "flashcard") {
-      question = document.getElementById("flashcard-question").value;
-      correctAnswer = document.getElementById("flashcard-answer").value;
-      questionType = "fc"; // Specify the question type
-
-      // Save the question along with the correct answer to IndexedDB
-      saveQuestion(
-        question,
-        questionType,
-        correctAnswer,
-        [],
-        selectedCategoryId
-      );
+      // Code for flashcard questions
     } else if (selectedOption === "multiple-choice") {
       question = document.getElementById("mc-question").value;
       questionType = "mc"; // Specify the question type
       const options = [];
-      const numOptions = 4; // Change this value to set the number of options
+      let numOptionsFilled = 0;
+      let isAnyOptionSelected = false;
 
-      for (let i = 1; i <= numOptions; i++) {
+      for (let i = 1; i <= 4; i++) {
         const optionInput = document.getElementById(`mc-option-${i}`);
-        const radio = document.querySelector(
-          `input[name="correct-answer"][value="${i}"]`
-        );
-
-        console.log("Option Input:", optionInput);
-        console.log("Radio Button:", radio);
-
-        options.push(optionInput.value);
-        if (radio.checked) {
-          correctAnswer = optionInput.value;
+        if (optionInput.value) {
+          numOptionsFilled++; // Count the number of filled options
+          options.push(optionInput.value);
+          isAnyOptionSelected = true;
         }
       }
 
-      // Save the question along with all options to IndexedDB
-      saveQuestion(
-        question,
-        questionType,
-        correctAnswer,
-        options,
-        selectedCategoryId
-      );
+      // Check if all fields are filled in and between 2-4 options are filled
+      if (
+        question &&
+        isAnyOptionSelected &&
+        selectedCategoryId &&
+        numOptionsFilled >= 2 &&
+        numOptionsFilled <= 4
+      ) {
+        // Determine the correct answer based on the selected radio button
+        const selectedRadioButton = document.querySelector(
+          'input[name="correct-answer"]:checked'
+        );
+        if (!selectedRadioButton) {
+          alert("Please select a correct answer.");
+          return; // Exit the function without submitting the form
+        }
+        const correctAnswerIndex = options.findIndex(
+          (option) =>
+            option === selectedRadioButton.previousElementSibling.value
+        );
+
+        if (correctAnswerIndex === -1) {
+          alert("Invalid correct answer selected.");
+          return; // Exit the function without submitting the form
+        }
+        const selectedOptionText = options[correctAnswerIndex];
+        if (!selectedOptionText.trim()) {
+          alert("The correct answer cannot be empty.");
+          return; // Exit the function without submitting the form
+        }
+
+        // Save the question to IndexedDB
+        saveQuestion(
+          question,
+          questionType,
+          selectedOptionText,
+          options,
+          selectedCategoryId
+        );
+      } else {
+        alert(
+          "Please fill in all required fields and provide between 2-4 options."
+        );
+        return; // Exit the function without submitting the form
+      }
     }
 
     console.log("Question:", question);
-    console.log("Correct Answer:", correctAnswer);
     console.log("Category ID:", selectedCategoryId);
     console.log("Question Type:", questionType); // Log the question type
     // Clear the form fields
@@ -175,6 +195,4 @@ document.addEventListener("DOMContentLoaded", async function () {
     option.textContent = category.name;
     categorySelect.appendChild(option);
   });
-
-  // Other code remains the same...
 });
