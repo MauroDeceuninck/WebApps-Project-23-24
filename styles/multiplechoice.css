@@ -1,0 +1,9 @@
+.question-container {
+  display: flex;
+  align-items: center; /* Align items vertically */
+}
+
+#speaker-btn {
+  margin-right: 15px; /* Adjust the margin as needed */
+  padding-left: 0;
+}

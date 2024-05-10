@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Categories</title>
+    <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/category.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="navbar-container"></div> <!-- Container for the navbar -->
+
+        <div class="content" id="category-container">
+            <h1 class="title">Manage Categories</h1>
+
+
+            <div id="add-category">
+                <h2>Add New Category</h2>
+                <form onsubmit="event.preventDefault(); addCategory()">
+                    <input type="text" id="new-category" name="new-category" placeholder="Enter new category name"
+                        required>
+                    <button type="submit">Add Category</button>
+                </form>
+            </div>
+
+            <div id="category-list">
+                <h2>Existing Categories</h2>
+                <ul id="categories">
+                    <!-- Existing categories will be listed here -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="scripts/app.js"></script>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/category.js"></script>
+</body>
+
+</html>

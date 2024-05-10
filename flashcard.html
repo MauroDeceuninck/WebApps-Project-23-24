@@ -1,3 +1,4 @@
+<!-- flashcard.html -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,12 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flashcard App</title>
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/flashcard.css">
 </head>
 
 <body>
     <div class="container">
         <div id="navbar-container"></div> <!-- Container for the navbar -->
-
 
         <div class="flashcard-container content">
             <h1 class="title">Flashcards</h1>
@@ -24,10 +25,12 @@
                         <span class="flashcard--span" id="flashcard--content_answer"></span>
                     </div>
                 </div>
+                <button id="speaker-btn" class="material-icons">
+                    volume_up
+                </button>
             </div>
+            <button class="refresh">New</button>
         </div>
-
-        <button class="refresh">New</button>
     </div>
 
     <script src="scripts/app.js"></script>

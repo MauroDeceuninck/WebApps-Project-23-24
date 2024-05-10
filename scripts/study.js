@@ -1,20 +1,45 @@
-document.addEventListener("DOMContentLoaded", function () {
-  const flashcardOption = document.getElementById("flashcard-option");
-  const mcOption = document.getElementById("mc-option");
+document.addEventListener("DOMContentLoaded", async function () {
+  const categorySelect = document.getElementById("category-select");
 
-  // Event listener for flashcard option button
-  flashcardOption.addEventListener("click", function () {
-    // Set the question type to flashcard
-    localStorage.setItem("questionType", "flashcard");
-    // Redirect to the study page
-    window.location.href = "study_questions.html";
-  });
+  try {
+    // Fetch categories from the database
+    const categories = await getCategories();
 
-  // Event listener for multiple choice option button
-  mcOption.addEventListener("click", function () {
-    // Set the question type to multiple choice
-    localStorage.setItem("questionType", "multiple-choice");
-    // Redirect to the study page
-    window.location.href = "study_questions.html";
-  });
+    // Clear the default loading option
+    categorySelect.innerHTML = "";
+
+    // Add default "All" option
+    const allOption = document.createElement("option");
+    allOption.value = "all";
+    allOption.textContent = "All";
+    categorySelect.appendChild(allOption);
+
+    // Populate dropdown with categories
+    categories.forEach((category) => {
+      const option = document.createElement("option");
+      option.value = category.id;
+      option.textContent = category.name;
+      categorySelect.appendChild(option);
+    });
+
+    // Retrieve selected category from local storage
+    let storedCategory = localStorage.getItem("selectedCategory");
+
+    // If no category was previously selected, default to "All"
+    if (!storedCategory) {
+      storedCategory = "all";
+    }
+
+    // Set the selected option
+    categorySelect.value = storedCategory;
+
+    // Event listener for selecting a category
+    categorySelect.addEventListener("change", function () {
+      const selectedCategory = categorySelect.value;
+      localStorage.setItem("selectedCategory", selectedCategory);
+    });
+    localStorage.setItem("selectedCategory", categorySelect.value);
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+  }
 });

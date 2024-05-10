@@ -42,16 +42,39 @@ function fetchFlashcardData() {
     .then((db) => {
       const transaction = db.transaction(["questions", "answers"], "readonly");
       const questionStore = transaction.objectStore("questions");
-      const answerStore = transaction.objectStore("answers"); // Assign answerStore here
+      const answerStore = transaction.objectStore("answers");
       const request = questionStore.getAll();
 
       request.onsuccess = function (event) {
         const questions = event.target.result;
         if (questions.length > 0) {
+          // Retrieve the selected category from local storage
+          let selectedCategory = localStorage.getItem("selectedCategory");
+
+          console.log("Selected category:", selectedCategory);
+
+          // If the selected category is "all", no filtering is needed
+          if (selectedCategory === "all") {
+            console.log("Displaying all questions.");
+            shuffledQuestions = shuffleArray(questions);
+          } else {
+            // Filter questions based on the selected category
+            const filteredQuestions = questions.filter(
+              (question) => question.categoryId === selectedCategory
+            );
+
+            console.log("Filtered questions:", filteredQuestions);
+
+            if (filteredQuestions.length > 0) {
+              shuffledQuestions = shuffleArray(filteredQuestions);
+            } else {
+              console.log("No questions found in the selected category.");
+            }
+          }
+
           // Set the total number of questions
-          totalQuestions = questions.length;
-          // Shuffle the questions
-          shuffledQuestions = shuffleArray(questions);
+          totalQuestions = shuffledQuestions.length;
+
           // Display the first flashcard initially
           displayNextFlashcard(answerStore);
         } else {
@@ -139,3 +162,30 @@ function refresh() {
   currentQuestionIndex = 0; // Reset currentQuestionIndex to 0
   fetchFlashcardData(); // Fetch the next flashcard
 }
+
+// Get the speaker button element
+const speakerBtn = document.getElementById("speaker-btn");
+
+// Add event listener to the speaker button
+speakerBtn.addEventListener("click", function (event) {
+  // Stop event propagation to prevent the card from flipping
+  event.stopPropagation();
+
+  // Check if the flashcard is flipped
+  const isFlipped = document
+    .getElementById("flashcard")
+    .classList.contains("flipped");
+
+  // Get the text content of the flashcard based on its state (question or answer)
+  const textContent = isFlipped
+    ? answerContent.textContent
+    : questionContent.textContent;
+
+  // Create a new SpeechSynthesisUtterance object with the text content
+  const speech = new SpeechSynthesisUtterance(textContent);
+
+  speech.lang = speechSynthesis.lang;
+  console.log("language:", speech.lang);
+  // Speak the text
+  speechSynthesis.speak(speech);
+});

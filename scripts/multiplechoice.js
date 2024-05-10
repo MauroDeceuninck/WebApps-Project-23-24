@@ -1,5 +1,3 @@
-// scripts/multiplechoice.js
-
 document.addEventListener("DOMContentLoaded", function () {
   loadNextQuestion();
 });
@@ -43,7 +41,10 @@ function createMCQuestionElement(questionText, questionId) {
   const mcQuestionElement = document.createElement("div");
   mcQuestionElement.classList.add("mc-question");
   mcQuestionElement.innerHTML = `
-      <p class="question-text">${questionText}</p>
+      <div class="question-container">
+        <button id="speaker-btn" class="material-icons">volume_up</button>
+        <p class="question-text">${questionText}</p>
+      </div>
       <div class="mc-options-container"></div>
       <button class="check-answer-btn" data-question-id="${questionId}">Check Answer</button>
     `;
@@ -180,21 +181,33 @@ function loadNextQuestion() {
       request.onsuccess = function (event) {
         const questions = event.target.result;
         if (questions && questions.length > 0) {
+          // Retrieve the selected category from local storage
+          const selectedCategory = localStorage.getItem("selectedCategory");
+
+          console.log("Selected category:", selectedCategory);
+
           // Filter out questions that have already been displayed
           const filteredQuestions = questions.filter(
-            (question) => !displayedQuestionIds.includes(question.id)
+            (question) =>
+              !displayedQuestionIds.includes(question.id) &&
+              (selectedCategory === "all" ||
+                question.categoryId === selectedCategory)
           );
+
           // Filter out only multiple choice questions
           const mcQuestions = filteredQuestions.filter(
             (question) => question.questionType === "mc"
           );
+
           // If there are no more new multiple choice questions, display an alert
           if (mcQuestions.length === 0) {
             alert("All multiple choice questions have been seen.");
             return;
           }
+
           // Shuffle the array of multiple choice questions
           const shuffledQuestions = shuffleArray(mcQuestions);
+
           // Display the first multiple choice question from the shuffled list
           const questionData = shuffledQuestions[0];
           const mcQuestionElement = createMCQuestionElement(
@@ -204,8 +217,10 @@ function loadNextQuestion() {
           mcQuestionsContainer.innerHTML = ""; // Clear previous question
           mcQuestionsContainer.appendChild(mcQuestionElement);
           displayMCOptions(answerStore, questionData.id, mcQuestionElement);
+
           // Update the displayedQuestionIds array
           displayedQuestionIds.push(questionData.id);
+          ttsSetup();
         } else {
           console.log("No questions found in the database.");
         }
@@ -218,4 +233,33 @@ function loadNextQuestion() {
     .catch((error) => {
       console.error("Error opening database:", error);
     });
+}
+
+function ttsSetup() {
+  // Get the speaker button element
+  const speakerBtn = document.getElementById("speaker-btn");
+
+  // Add event listener to the speaker button
+  speakerBtn.addEventListener("click", function () {
+    // Get the question text
+    const questionText = document.querySelector(".question-text").textContent;
+
+    // Get the options text
+    const optionsContainer = document.querySelector(".mc-options-container");
+    const options = Array.from(optionsContainer.querySelectorAll("span")).map(
+      (option) => option.textContent
+    );
+    const optionsText = options.join(", ");
+
+    // Concatenate the question and options text
+    const textContent = `${questionText}. ${optionsText}`;
+
+    // Create a new SpeechSynthesisUtterance object with the concatenated text content
+    const speech = new SpeechSynthesisUtterance(textContent);
+
+    speech.lang = speechSynthesis.lang;
+
+    // Speak the text
+    speechSynthesis.speak(speech);
+  });
 }

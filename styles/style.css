@@ -27,6 +27,7 @@ body {
 
 .container {
   overflow: hidden;
+  height: 100vh;
 }
 
 /* Nav Menu */
@@ -135,13 +136,21 @@ body {
   transform: none;
 }
 
+#menu li:last-child {
+  margin-top: 50px;
+}
+
+#TTS-label {
+  color: var(--menu-text-color);
+}
+
 /* Page Content */
 .content {
   text-align: center;
 }
 
 .title {
-  margin: 0 0 10px 0;
+  margin: 0 0 10vh 0;
   font-size: 24px;
   top: 22px;
   position: relative;
@@ -346,8 +355,6 @@ body {
 }
 
 .refresh {
-  display: block;
-  margin: -1.5em auto 0 auto;
   width: 50vw;
   max-width: 8em;
   height: 1.5em;
@@ -358,7 +365,10 @@ body {
   font-size: inherit;
   font-family: inherit;
   cursor: pointer;
-  outline: none;
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 /* Multiple choice page */
@@ -446,4 +456,12 @@ body {
 }
 #mc-questions-container input:checked + label [data-type="pointer"] + span {
   left: 0;
+}
+
+#speaker-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--secondary-color);
+  font-size: 24px;
+  cursor: pointer;
 }

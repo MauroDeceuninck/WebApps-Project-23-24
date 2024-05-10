@@ -26,8 +26,27 @@ function openDB() {
 
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
-      db.createObjectStore("questions", { keyPath: "id", autoIncrement: true });
-      db.createObjectStore("answers", { keyPath: "id", autoIncrement: true });
+
+      // Create object store for questions
+      const questionStore = db.createObjectStore("questions", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
+
+      // Create object store for answers
+      const answerStore = db.createObjectStore("answers", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
+
+      // Create object store for categories
+      const categoryStore = db.createObjectStore("categories", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
+
+      // Create an index in the "answers" object store for querying by questionId
+      answerStore.createIndex("questionId", "questionId", { unique: false });
     };
 
     request.onsuccess = (event) => {

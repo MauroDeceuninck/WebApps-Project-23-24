@@ -1,14 +1,27 @@
 <!-- navbar.html -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 <nav role="navigation">
     <div id="menuToggle">
-        <input type="checkbox" />
+
+        <input type="checkbox" aria-label="NavbarToggle" />
         <span></span>
         <span></span>
         <span></span>
         <ul id="menu">
-            <li><a href="study.html" id="studyLink">Studiepagina</a></li>
-            <li><a href="add.html" id="addLink">Vragen toevoegen</a></li>
-            <li><a href="edit.html" id="editLink">Vragen veranderen</a></li>
+            <li><a href="study.html" class="studyLink">Study Page</a></li>
+            <li><a href="add.html" class="addLink">Add Questions</a></li>
+            <li><a href="edit.html" class="editLink">Edit Questions</a></li>
+            <li><a href="category.html" class="editLink">Categories</a></li>
+            <li>
+                <label id="TTS-label" for="languageSelect">Text to speech language:</label>
+                <select id="languageSelect">
+                    <option value="en-US">English</option>
+                    <option value="nl-NL">Dutch</option>
+                    <option value="fr-FR">French</option>
+                    <!-- Add more language options as needed -->
+                </select>
+            </li>
         </ul>
     </div>
 </nav>

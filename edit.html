@@ -1,11 +1,13 @@
+<!-- edit.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Questions</title>
+    <title>Flashcard and Multiple Choice Question Editor</title>
     <link rel="stylesheet" href="styles/style.css">
+    <link rel="stylesheet" href="styles/edit-style.css">
 </head>
 
 <body>
@@ -13,20 +15,38 @@
         <div id="navbar-container"></div> <!-- Container for the navbar -->
 
         <div class="contentContainer content">
-            <h1>Edit Questions</h1>
+            <h1 class="title">Edit Page</h1>
 
-            <div id="flashcard-section">
-                <h2>Flashcard Questions</h2>
-                <div id="flashcard-questions"></div>
+            <div class="edit-columns">
+                <!-- Flashcard column -->
+                <div class="edit-column">
+                    <div class="column-content">
+                        <h1>Flashcard Editor</h1>
+                        <div id="flashcard">
+                            <div id="flashcard--content_question"></div>
+                            <div id="flashcard--content_answer"></div>
+                            <div id="flashcard-questions" class="question-list"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multiple Choice column -->
+                <div class="edit-column">
+                    <div class="column-content">
+                        <h1>Multiple Choice Question Editor</h1>
+                        <div id="mc-questions-container" class="question-list"></div>
+                        <div id="mc-questions"></div>
+                    </div>
+                </div>
             </div>
 
-            <div id="multiple-choice-section">
-                <h2>Multiple Choice Questions</h2>
-                <div id="multiple-choice-questions"></div>
-            </div>
+            <!-- Edit form container -->
+            <div id="edit-form-container" class="edit-form"></div>
+
         </div>
     </div>
 
+    <!-- Include your JavaScript files here -->
     <script src="scripts/app.js"></script>
     <script src="scripts/script.js"></script>
     <script src="scripts/edit.js"></script>

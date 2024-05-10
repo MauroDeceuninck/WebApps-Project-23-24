@@ -1,6 +1,12 @@
 // scripts/add.js
 
-function saveQuestion(question, questionType, correctAnswer, otherAnswers) {
+function saveQuestion(
+  question,
+  questionType,
+  correctAnswer,
+  otherAnswers,
+  categoryId
+) {
   openDB()
     .then((db) => {
       const transaction = db.transaction(["questions", "answers"], "readwrite");
@@ -11,7 +17,9 @@ function saveQuestion(question, questionType, correctAnswer, otherAnswers) {
       const questionData = {
         question: question,
         questionType: questionType,
+        categoryId: categoryId, // Include category ID
       };
+      console.log("Question Data:", questionData);
       const questionRequest = questionStore.add(questionData);
 
       questionRequest.onsuccess = (event) => {
@@ -92,10 +100,12 @@ document.addEventListener("DOMContentLoaded", function () {
   // Call toggleQuestionFields initially to set the initial state
   toggleQuestionFields();
 
-  // Event listener for form submission
+  // Inside the form submit event listener
   const form = document.querySelector("form");
-  form.addEventListener("submit", function (event) {
+  form.addEventListener("submit", async function (event) {
     event.preventDefault(); // Prevent the default form submission
+
+    const selectedCategoryId = document.getElementById("category-select").value;
 
     // Get the question data based on the selected question type
     let question, correctAnswer, questionType;
@@ -106,7 +116,13 @@ document.addEventListener("DOMContentLoaded", function () {
       questionType = "fc"; // Specify the question type
 
       // Save the question along with the correct answer to IndexedDB
-      saveQuestion(question, questionType, correctAnswer, []);
+      saveQuestion(
+        question,
+        questionType,
+        correctAnswer,
+        [],
+        selectedCategoryId
+      );
     } else if (selectedOption === "multiple-choice") {
       question = document.getElementById("mc-question").value;
       questionType = "mc"; // Specify the question type
@@ -119,6 +135,9 @@ document.addEventListener("DOMContentLoaded", function () {
           `input[name="correct-answer"][value="${i}"]`
         );
 
+        console.log("Option Input:", optionInput);
+        console.log("Radio Button:", radio);
+
         options.push(optionInput.value);
         if (radio.checked) {
           correctAnswer = optionInput.value;
@@ -126,13 +145,36 @@ document.addEventListener("DOMContentLoaded", function () {
       }
 
       // Save the question along with all options to IndexedDB
-      saveQuestion(question, questionType, correctAnswer, options);
+      saveQuestion(
+        question,
+        questionType,
+        correctAnswer,
+        options,
+        selectedCategoryId
+      );
     }
 
     console.log("Question:", question);
     console.log("Correct Answer:", correctAnswer);
+    console.log("Category ID:", selectedCategoryId);
     console.log("Question Type:", questionType); // Log the question type
     // Clear the form fields
     form.reset();
   });
+});
+
+document.addEventListener("DOMContentLoaded", async function () {
+  // Fetch categories
+  const categories = await getCategories();
+  const categorySelect = document.getElementById("category-select");
+
+  // Populate dropdown list with categories
+  categories.forEach((category) => {
+    const option = document.createElement("option");
+    option.value = category.id;
+    option.textContent = category.name;
+    categorySelect.appendChild(option);
+  });
+
+  // Other code remains the same...
 });
