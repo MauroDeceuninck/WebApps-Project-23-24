@@ -95,16 +95,17 @@ document.addEventListener("click", function (event) {
         const answerStore = transaction.objectStore("answers");
 
         console.log("Checking answer for question ID:", questionId);
-        const getRequest = answerStore.openCursor();
+        const getRequest = answerStore
+          .index("questionId")
+          .openCursor(IDBKeyRange.only(questionId));
 
         getRequest.onsuccess = function (event) {
           const cursor = event.target.result;
+          console.log("Cursor:", cursor);
           if (cursor) {
             const answer = cursor.value;
-            console.log("All answers:", cursor.value);
-            if (answer.questionId === questionId) {
-              console.log("Answer for question ID:", questionId, answer);
-              console.log("Selected option:", selectedOptionText);
+            console.log("Answer:", answer);
+            if (answer.isCorrect) {
               console.log("Correct option:", answer.option);
 
               // Highlight wrong answer in red
@@ -128,16 +129,9 @@ document.addEventListener("click", function (event) {
                 selectedOption.nextElementSibling.classList.add("incorrect");
               }
 
-              // if (selectedOptionText === answer.option) {
-              //   alert("Correct answer!");
-              //   // You can implement logic to proceed to the next question here
-              // } else {
-              //   alert("Incorrect answer. Please try again.");
-              //   // You can implement additional logic for incorrect answers here
-              // }
-              return; // Stop iterating over cursor once answer is found
+              return; // Stop iterating over cursor once correct answer is found
             }
-            cursor.continue();
+            cursor.continue(); // Continue to the next answer
           } else {
             // No answer found
             console.log("No answer found for question ID:", questionId);
