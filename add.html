@@ -28,38 +28,80 @@
                 <!-- Flashcard question input fields -->
                 <div id="flashcard-question-fields" class="question-fields">
                     <fieldset>
-                        <legend>Flashcard Vraag</legend>
-                        <label for="flashcard-question">Vraag:</label><br>
-                        <input type="text" id="flashcard-question" name="flashcard-question"><br><br>
-                        <label for="flashcard-answer">Antwoord:</label><br>
-                        <input type="text" id="flashcard-answer" name="flashcard-answer"><br><br>
+                        <legend>Flashcard question</legend>
+                        <label for="flashcard-question">Question:</label><br>
+                        <input type="textbox" id="flashcard-question" name="flashcard-question"><br><br>
+                        <label for="flashcard-answer">Answer:</label><br>
+                        <input type="textbox" id="flashcard-answer" name="flashcard-answer"><br><br>
                     </fieldset>
                 </div>
 
                 <!-- Multiple choice question input fields -->
-                <!-- Multiple choice question input fields -->
                 <div id="mc-question-fields" class="question-fields">
                     <fieldset>
-                        <legend>Multiple Choice Vraag</legend>
-                        <label for="mc-question">Vraag:</label><br>
-                        <input type="text" id="mc-question" name="mc-question"><br><br>
-                        <label for="mc-options">Opties:</label><br>
-                        <input type="text" id="mc-option-1" name="mc-option-1"><input type="radio" name="correct-answer"
-                            value="1">Correct Answer<br>
-                        <input type="text" id="mc-option-2" name="mc-option-2"><input type="radio" name="correct-answer"
-                            value="2">Correct Answer<br>
-                        <input type="text" id="mc-option-3" name="mc-option-3"><input type="radio" name="correct-answer"
-                            value="3">Correct Answer<br>
-                        <input type="text" id="mc-option-4" name="mc-option-4"><input type="radio" name="correct-answer"
-                            value="4">Correct Answer<br>
+                        <legend>Multiple Choice question</legend>
+                        <table>
+
+                            <th>
+                                <tr>
+                                    <td colspan="2">
+                                        <label for="mc-question">Question:</label><br>
+                                        <input type="textbox" id="mc-question" name="mc-question"><br><br>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <label for="mc-options">Options:</label><br>
+                                    </td>
+                                    <td>
+                                        <label for="mc-isCorrect">Correct Option:</label>
+                                    </td>
+                                </tr>
+                            </th>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <input type="textbox" id="mc-option-1" name="mc-option-1">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="correct-answer" value="1">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="textbox" id="mc-option-2" name="mc-option-2">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="correct-answer" value="2">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="textbox" id="mc-option-3" name="mc-option-3">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="correct-answer" value="3">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="textbox" id="mc-option-4" name="mc-option-4">
+                                    </td>
+                                    <td>
+                                        <input type="radio" name="correct-answer" value="4">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </fieldset>
+
                 </div>
 
                 <label for="category-select">Select Category:</label><br>
                 <select id="category-select">
                     <!-- Options will be populated dynamically using JavaScript -->
                 </select>
-                <button type="submit">Toevoegen</button>
+                <button type="submit">Add question</button>
             </form>
             <!-- End of form element -->
         </div>

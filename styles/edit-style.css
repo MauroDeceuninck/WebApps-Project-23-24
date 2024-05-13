@@ -1,25 +1,20 @@
-/* edit-style.css */
-
-/* Title styles */
-
-/* Edit columns */
 .edit-columns {
   display: flex;
   justify-content: space-between;
   margin: auto 7vw;
-  flex-wrap: wrap; /* Allow flex items to wrap */
+  flex-wrap: wrap;
 }
 
 /* Individual column styles */
 .edit-column {
-  width: calc(50% - 20px); /* Adjust as needed */
+  width: calc(50% - 20px);
   padding: 10px;
 }
 
 /* Column content container */
 .column-content {
-  border: 1px solid #ccc; /* Add border */
-  border-radius: 10px; /* Rounded corners */
+  border: 1px solid #ccc;
+  border-radius: 10px;
   padding: 10px;
 }
 
@@ -36,51 +31,31 @@
 
 /* Question container */
 .question-container {
-  border: 1px solid #ccc; /* Add border */
-  border-radius: 10px; /* Rounded corners */
+  border: 1px solid #ccc;
+  border-radius: 10px;
   padding: 10px;
   margin-bottom: 10px;
 }
 
 ul {
   list-style-type: none;
+  padding: 0;
 }
 
-/* Media query for smaller screens */
 @media screen and (max-width: 850px) {
   .edit-column {
-    width: calc(100% - 20px); /* Adjust as needed */
-    margin-bottom: 20px; /* Add space between columns */
+    width: calc(100% - 20px);
+    margin-bottom: 20px;
   }
 }
 
 /* Form styles */
 form {
   display: flex;
-  flex-direction: column; /* Stack inputs vertically */
-  align-items: center; /* Center-align form items */
+  flex-direction: column;
+  align-items: center;
 }
 
 input {
-  margin-bottom: 10px; /* Add space between inputs */
-}
-
-/* TEXTBOX */
-input[type="textbox"] {
-  color: white;
-  font-style: italic;
-  border: 0;
-  width: 200px;
-  padding: 3px;
-  border-radius: 4px;
-  border-bottom: 1px solid gray;
-  background: transparent;
-  transition: all 0.4s ease;
-  -ms-transition: all 0.4s ease;
-  -webkit-transition: all 0.4s ease;
-  -moz-transition: all 0.4s ease;
-  -o-transition: all 0.4s ease;
-}
-input[type="textbox"]:focus {
-  border-bottom-color: white;
+  margin-bottom: 10px;
 }

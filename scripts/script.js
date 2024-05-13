@@ -103,3 +103,11 @@ function getCategories() {
       });
   });
 }
+
+window.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("input", function (event) {
+    if (event.target.matches('input[type="textbox"]')) {
+      event.target.style.width = (event.target.value.length + 1) * 7 + "px";
+    }
+  });
+});

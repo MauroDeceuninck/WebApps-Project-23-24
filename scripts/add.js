@@ -67,7 +67,6 @@ function saveQuestion(
     });
 }
 
-// scripts/add.js
 document.addEventListener("DOMContentLoaded", function () {
   const questionTypeSelect = document.getElementById("question-type");
   const flashcardQuestionFields = document.getElementById(
@@ -75,29 +74,39 @@ document.addEventListener("DOMContentLoaded", function () {
   );
   const mcQuestionFields = document.getElementById("mc-question-fields");
   const addButton = document.querySelector("#addPage button[type='submit']");
+  const categorySelect = document.getElementById("category-select");
+  const categoryLabel = document.querySelector("label[for='category-select']");
 
-  // Function to toggle visibility of question fields based on selected question type
+  // Function to toggle visibility of question fields and category select based on selected question type
   function toggleQuestionFields() {
     flashcardQuestionFields.style.display = "none";
     mcQuestionFields.style.display = "none";
+    addButton.style.display = "none"; // Hide the button by default
+    categorySelect.style.display = "none"; // Hide category select by default
+    categoryLabel.style.display = "none"; // Hide category label by default
 
     const selectedOption = questionTypeSelect.value;
 
     if (selectedOption === "flashcard") {
       flashcardQuestionFields.style.display = "block";
-      addButton.style.display = "block"; // Show the button for flashcard questions
     } else if (selectedOption === "multiple-choice") {
       mcQuestionFields.style.display = "block";
+    }
+
+    if (
+      selectedOption === "flashcard" ||
+      selectedOption === "multiple-choice"
+    ) {
       addButton.style.display = "block"; // Show the button for multiple choice questions
-    } else {
-      addButton.style.display = "none"; // Hide the button if no option is selected
+      categorySelect.style.display = "block"; // Show category select for flashcard questions
+      categoryLabel.style.display = "block"; // Show category label for flashcard questions
     }
   }
 
-  // Event listener for changes in the dropdown menu
+  // Add event listener to question type select to trigger toggleQuestionFields() function
   questionTypeSelect.addEventListener("change", toggleQuestionFields);
 
-  // Call toggleQuestionFields initially to set the initial state
+  // Trigger toggleQuestionFields() function on page load
   toggleQuestionFields();
 
   // Inside the form submit event listener
@@ -107,72 +116,86 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const selectedCategoryId = document.getElementById("category-select").value;
 
+    // Inside the form submit event listener
     // Get the question data based on the selected question type
     let question, correctAnswer, questionType;
     const selectedOption = questionTypeSelect.value;
     if (selectedOption === "flashcard") {
-      // Code for flashcard questions
+      question = document.getElementById("flashcard-question").value;
+      correctAnswer = document.getElementById("flashcard-answer").value;
+      questionType = "fc"; // Specify the question type
+
+      // Save the question along with the correct answer to IndexedDB
+      saveQuestion(
+        question,
+        questionType,
+        correctAnswer,
+        [],
+        selectedCategoryId
+      );
     } else if (selectedOption === "multiple-choice") {
       question = document.getElementById("mc-question").value;
       questionType = "mc"; // Specify the question type
       const options = [];
-      let numOptionsFilled = 0;
-      let isAnyOptionSelected = false;
+      const numOptions = 4; // Number of options
+      let selectedOptionIndex = -1; // Initialize the selected option index
 
-      for (let i = 1; i <= 4; i++) {
-        const optionInput = document.getElementById(`mc-option-${i}`);
-        if (optionInput.value) {
-          numOptionsFilled++; // Count the number of filled options
-          options.push(optionInput.value);
-          isAnyOptionSelected = true;
+      // Loop through each radio button to find the selected correct answer
+      for (let i = 1; i <= numOptions; i++) {
+        const radioButton = document.querySelector(
+          `input[name="correct-answer"][value="${i}"]`
+        );
+        if (radioButton && radioButton.checked) {
+          selectedOptionIndex = i - 1; // Convert 1-based index to 0-based index
+          break; // Exit the loop once the selected radio button is found
         }
       }
 
-      // Check if all fields are filled in and between 2-4 options are filled
-      if (
-        question &&
-        isAnyOptionSelected &&
-        selectedCategoryId &&
-        numOptionsFilled >= 2 &&
-        numOptionsFilled <= 4
-      ) {
-        // Determine the correct answer based on the selected radio button
-        const selectedRadioButton = document.querySelector(
-          'input[name="correct-answer"]:checked'
+      // If a correct answer is selected, retrieve the corresponding option text
+      if (selectedOptionIndex !== -1) {
+        const selectedOptionTextbox = document.getElementById(
+          `mc-option-${selectedOptionIndex + 1}`
         );
-        if (!selectedRadioButton) {
-          alert("Please select a correct answer.");
-          return; // Exit the function without submitting the form
-        }
-        const correctAnswerIndex = options.findIndex(
-          (option) =>
-            option === selectedRadioButton.previousElementSibling.value
-        );
+        correctAnswer = selectedOptionTextbox.value.trim();
 
-        if (correctAnswerIndex === -1) {
-          alert("Invalid correct answer selected.");
-          return; // Exit the function without submitting the form
-        }
-        const selectedOptionText = options[correctAnswerIndex];
-        if (!selectedOptionText.trim()) {
+        // Check if the selected correct answer is empty
+        if (!correctAnswer) {
           alert("The correct answer cannot be empty.");
           return; // Exit the function without submitting the form
         }
-
-        // Save the question to IndexedDB
-        saveQuestion(
-          question,
-          questionType,
-          selectedOptionText,
-          options,
-          selectedCategoryId
-        );
       } else {
-        alert(
-          "Please fill in all required fields and provide between 2-4 options."
-        );
+        alert("Please select a correct answer.");
         return; // Exit the function without submitting the form
       }
+
+      // Retrieve all options
+      for (let i = 1; i <= numOptions; i++) {
+        const optionInput = document.getElementById(`mc-option-${i}`);
+        const optionValue = optionInput.value.trim();
+        if (optionValue) {
+          options.push(optionValue);
+        }
+      }
+
+      // Check if at least 2 options are provided
+      if (options.length < 2) {
+        alert("Please provide at least 2 options.");
+        return; // Exit the function without submitting the form
+      }
+
+      // Save the question to IndexedDB
+      saveQuestion(
+        question,
+        questionType,
+        correctAnswer,
+        options,
+        selectedCategoryId
+      );
+    } else {
+      alert(
+        "Please fill in all required fields and provide between 2-4 options."
+      );
+      return; // Exit the function without submitting the form
     }
 
     console.log("Question:", question);

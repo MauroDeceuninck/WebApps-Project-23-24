@@ -140,11 +140,15 @@ function displayAnswers(answerStore, question, questionElement) {
         updateQuestionCategory(question.id, newCategoryId);
       });
 
+      const button_group = document.createElement("div");
+      button_group.classList.add("button-group");
+
       // Append edit, delete buttons, and category dropdown to the question element
       questionElement.appendChild(answersList);
       questionElement.appendChild(categoryDropdown);
-      questionElement.appendChild(editButton);
-      questionElement.appendChild(deleteButton);
+      button_group.appendChild(editButton);
+      button_group.appendChild(deleteButton);
+      questionElement.appendChild(button_group);
     }
   };
 
@@ -339,6 +343,7 @@ function showEditForm(question, answers) {
     answerInput.type = "textbox";
     answerInput.value = answer.option;
     const answerContainer = document.createElement("div");
+    answerContainer.classList.add("answer-container");
 
     // Create a label for the answer input
     const answerLabel = document.createElement("label");
@@ -354,6 +359,7 @@ function showEditForm(question, answers) {
     isCorrectRadio.name = `correctAnswer_${question.id}`;
     isCorrectRadio.value = index;
     isCorrectRadio.checked = answer.isCorrect;
+    isCorrectRadio.ariaLabel = `Mark answer ${question.id} correct`;
     isCorrectRadio.addEventListener("change", function () {
       // Update isCorrect property of the answer
       answers.forEach((ans, idx) => {
@@ -361,11 +367,12 @@ function showEditForm(question, answers) {
       });
     });
 
-    const isCorrectLabel = document.createElement("label");
-    isCorrectLabel.textContent = "Correct answer";
-    isCorrectLabel.appendChild(isCorrectRadio);
+    // const isCorrectLabel = document.createElement("label");
+    // isCorrectLabel.textContent = "Correct answer";
+    // isCorrectLabel.appendChild();
+    // isCorrectLabel.hidden = true;
 
-    answerContainer.appendChild(isCorrectLabel);
+    answerContainer.appendChild(isCorrectRadio);
 
     // Add event listener to check for empty or duplicate input values
     answerInput.addEventListener("input", function () {

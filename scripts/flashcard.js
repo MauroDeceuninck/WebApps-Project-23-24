@@ -4,6 +4,10 @@ const flashcard = document.getElementById("flashcard");
 const refreshBtn = document.querySelector(".refresh");
 const questionContent = document.getElementById("flashcard--content_question");
 const answerContent = document.getElementById("flashcard--content_answer");
+const flashcardContainer = document.getElementById("flashcard");
+const noFlashcardMessage = document.getElementById("no-flashcard-message");
+const flashcardSeenMessage = document.getElementById("flashcard-seen-message");
+
 let totalQuestions = 0; // Variable to store the total number of questions
 let questionsSeen = new Set(); // Set to store questions already seen
 let shuffledQuestions = []; // Array to store shuffled questions
@@ -44,12 +48,6 @@ function fetchFlashcardData() {
       const questionStore = transaction.objectStore("questions");
       const answerStore = transaction.objectStore("answers");
       const request = questionStore.getAll();
-
-      const flashcardContainer = document.getElementById("flashcard");
-      const refreshBtn = document.querySelector(".refresh");
-      const noFlashcardMessage = document.getElementById(
-        "no-flashcard-message"
-      );
 
       request.onsuccess = function (event) {
         const questions = event.target.result;
@@ -109,6 +107,10 @@ function displayNextFlashcard(answerStore) {
   // Check if all flashcards have been seen
   if (questionsSeen.size === totalQuestions) {
     console.log("All flashcards displayed.");
+    // Hide flashcard container and show no flashcard message
+    refreshBtn.style.display = "none";
+    flashcardContainer.style.display = "none";
+    flashcardSeenMessage.style.display = "block";
     return;
   }
 
@@ -123,10 +125,12 @@ function displayNextFlashcard(answerStore) {
     } else {
       // Check if the question type is "fc"
       if (shuffledQuestions[currentQuestionIndex].questionType === "fc") {
-        const getRequest = answerStore.get(questionId);
+        const index = answerStore.index("questionId");
+        const getRequest = index.get(questionId);
 
         getRequest.onsuccess = function (event) {
           const answer = event.target.result;
+          console.log("Answer:", answer);
           if (answer) {
             displayFlashcard(
               shuffledQuestions[currentQuestionIndex].question,

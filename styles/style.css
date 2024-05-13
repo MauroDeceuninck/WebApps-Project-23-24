@@ -162,8 +162,15 @@ body {
 }
 
 .about {
+  width: 50vw;
   font-size: 14px;
   color: var(--menu-hover-color);
+}
+
+#studyPage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 /* study.html */
@@ -268,6 +275,7 @@ body {
   -moz-transform: perspective(1000px);
   -moz-transform-style: preserve-3d;
   -ms-transform-style: preserve-3d;
+  position: relative;
 }
 
 .flip-container.flipped .flipper,
@@ -473,4 +481,93 @@ body {
 
 .ErrorMessage {
   font-size: initial;
+}
+
+select {
+  padding: 5px 10px;
+  width: 300px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+fieldset {
+  padding: 50px;
+  margin: 20px;
+  border-radius: 30px;
+}
+
+/* Styling for radio buttons */
+input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cdcdcd;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  margin-right: 5px; /* Adjust spacing between radio button and label */
+  margin: 0;
+}
+
+/* Style the checked radio button */
+input[type="radio"]:checked {
+  background-color: tomato; /* Change background color when radio button is checked */
+}
+
+.answer-container {
+  margin: 5px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.answer-container input {
+  margin-left: 10px;
+}
+
+button:not(.refresh, #speaker-btn) {
+  background-color: var(--accent-color);
+  color: var(--secondary-color);
+  border: none;
+  margin: 2em 0.5em;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:not(.refresh, #speaker-btn):hover {
+  background-color: rgba(255, 99, 71, 0.8);
+}
+
+button:not(.refresh, #speaker-btn):disabled {
+  background-color: gray;
+}
+
+/* TEXTBOX */
+input[type="textbox"] {
+  color: white;
+  font-style: italic;
+  border: 1px solid gray;
+  min-width: 200px;
+  padding: 3px;
+  border-radius: 4px;
+  border-bottom: 1px solid gray;
+  background: transparent;
+  transition: all 0.4s ease;
+  -ms-transition: all 0.4s ease;
+  -webkit-transition: all 0.4s ease;
+  -moz-transition: all 0.4s ease;
+  -o-transition: all 0.4s ease;
+  margin: 2px;
+}
+input[type="textbox"]:focus {
+  border-bottom-color: white;
 }
