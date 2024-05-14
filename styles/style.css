@@ -164,7 +164,7 @@ body {
 .about {
   width: 50vw;
   font-size: 14px;
-  color: var(--menu-hover-color);
+  color: var(--secondary-color);
 }
 
 #studyPage {

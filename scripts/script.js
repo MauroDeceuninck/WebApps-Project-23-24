@@ -4,7 +4,7 @@
 window.addEventListener("DOMContentLoaded", function () {
   // Load and inject the navbar content
   if (document.getElementById("navbar-container")) {
-    fetch("navbar.html")
+    fetch("/navbar.html")
       .then((response) => response.text())
       .then((data) => {
         document.getElementById("navbar-container").innerHTML = data;

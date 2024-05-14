@@ -1,9 +1,13 @@
 const CACHE_NAME = "study-app-cache-v1";
 const staticFiles = [
   "/",
-  "/index.html",
-  "/scripts/script.js",
-  "/styles/style.css",
+  "/pages",
+  "/scripts",
+  "/styles",
+  "https://fonts.googleapis.com/icon?family=Material+Icons",
+  "https://fonts.googleapis.com/icon?family=Material+Icons+Outlined",
+  "manifest.json",
+  "images",
 ];
 
 self.addEventListener("install", (event) => {
